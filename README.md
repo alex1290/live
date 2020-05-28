@@ -1,6 +1,8 @@
 # P2P Live 
 
 Use Node.js, socket.io, p2p, react.
+Let you stream you picture to client in LAN
+
 
 ## Step :
 
