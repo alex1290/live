@@ -117,6 +117,9 @@ function App(props) {
   return (
     <Container>
       <Row>
+        <Info>Update Ip Address : <button onClick={() => socket.current.emit('addr')}>Update</button></Info>
+      </Row>
+      <Row>
         <Info>User Info : UUID = {UUID}</Info>
         <Info>Admin ID : {adminID}</Info>
       </Row>

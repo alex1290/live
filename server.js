@@ -1,12 +1,20 @@
 const express = require('express');
+const fs = require('fs')
 const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-const records = require('./records.js');
 const port = process.env.PORT || 3003;
-const cors = require('cors')
 
-app.use(cors());
+const updateAddr = () =>
+    require('dns').lookup(require('os').hostname(), function (err, add, fam) {
+        let data = `{ "ip": "${add}" }`
+        fs.writeFile('./src/config/ip.json', data, (err) => {
+            if (err) throw err;
+            console.log('The file has been updated!\nyour addr : ' + add);
+        });
+    });
+
+updateAddr();
 
 let id = 0;
 
@@ -15,6 +23,27 @@ let adminID = "none";
 let deviceConnect = [];
 let onlive = null;
 
+
+function getClientIp(req) {
+    var ip = req.headers['x-forwarded-for'] ||
+        req.ip ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        req.connection.socket.remoteAddress || '';
+    if (ip.split(',').length > 0) {
+        ip = ip.split(',')[0]
+    }
+    ip = ip.substr(ip.lastIndexOf(':') + 1, ip.length);
+    console.log("ip:" + ip);
+    return ip;
+};
+
+app.get('/', (req, res) => {
+
+    res.send(`your IP ${getClientIp(req)}`)
+})
+
+
 io.on('connection', (socket) => {
     const init = () => {
         io.emit("controllerConnect", controllerConnect);
@@ -22,7 +51,7 @@ io.on('connection', (socket) => {
         io.emit("adminID", adminID);
     }
 
-
+    socket.on('addr', () => updateAddr());
 
     socket.on('type', type => {
         id++;

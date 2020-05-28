@@ -9,8 +9,8 @@ import {
   Route,
 } from "react-router-dom";
 import * as serviceWorker from './serviceWorker';
-
-const ip = "localhost"
+import ipData from './config/ip.json'
+const { ip } = ipData
 
 ReactDOM.render(
   <React.StrictMode>
