@@ -9,8 +9,14 @@ const updateAddr = () =>
     require('dns').lookup(require('os').hostname(), function (err, add, fam) {
         let data = `{ "ip": "${add}" }`
         fs.writeFile('./src/config/ip.json', data, (err) => {
-            if (err) throw err;
-            console.log('The file has been updated!\nyour addr : ' + add);
+            if (err) {
+                fs.mkdir('./src/config', err => {
+                    if (err) throw err
+                    updateAddr();
+                });
+            } else {
+                console.log('The file has been updated!\nyour addr : ' + add);
+            }
         });
     });
 
